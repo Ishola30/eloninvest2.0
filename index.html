@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elon Wallet | Investment Dashboard</title>
+
+<style>
+:root {
+  --bg: #090b10;
+  --panel: #121620;
+  --panel2: #191f2b;
+  --gold: #d9b45b;
+  --gold2: #f0d58c;
+  --text: #f5f5f5;
+  --muted: #929aaa;
+  --border: rgba(255,255,255,.08);
+  --green: #42c995;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+
+button, input, select { font: inherit; }
+
+button { cursor: pointer; }
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(217,180,91,.12), transparent 38%),
+    var(--bg);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 38px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.4);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: .5px;
+}
+
+.brand-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  color: #111;
+  background: linear-gradient(135deg,var(--gold2),var(--gold));
+  border-radius: 13px;
+  font-size: 23px;
+}
+
+.gold { color: var(--gold); }
+
+.login-card h1 {
+  font-size: 27px;
+  margin: 35px 0 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+.field { margin-bottom: 19px; }
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: #c7ccd5;
+  margin-bottom: 9px;
+}
+
+.field input {
+  width: 100%;
+  padding: 15px;
+  color: white;
+  background: #0c1018;
+  border: 1px solid #2a3140;
+  border-radius: 10px;
+  outline: none;
+}
+
+.field input:focus {
+  border-color: var(--gold);
+}
+
+.primary-btn {
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(135deg,var(--gold2),var(--gold));
+  color: #17130a;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.primary-btn:hover { filter: brightness(1.08); }
+
+.login-note {
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 22px;
+}
+
+.dashboard { display: none; min-height: 100vh; }
+
+.sidebar {
+  width: 245px;
+  position: fixed;
+  inset: 0 auto 0 0;
+  background: #10141d;
+  border-right: 1px solid var(--border);
+  padding: 27px 18px;
+}
+
+.sidebar .brand { margin: 0 8px 45px; }
+
+.nav-label {
+  color: #70798a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 0 12px;
+  margin: 25px 0 12px;
+}
+
+.nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 14px;
+  margin: 5px 0;
+  border: 0;
+  border-radius: 9px;
+  color: #aeb5c2;
+  background: transparent;
+  text-align: left;
+  font-size: 14px;
+}
+
+.nav-btn:hover, .nav-btn.active {
+  color: var(--gold2);
+  background: rgba(217,180,91,.10);
+}
+
+.sidebar-bottom {
+  position: absolute;
+  bottom: 25px;
+  left: 20px;
+  right: 20px;
+}
+
+.logout {
+  color: #e58d8d;
+  background: rgba(229,141,141,.08);
+}
+
+.main {
+  margin-left: 245px;
+  padding: 32px;
+  max-width: 1600px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 35px;
+}
+
+.topbar h1 { font-size: 25px; margin: 0 0 7px; }
+.topbar p { margin: 0; color: var(--muted); font-size: 13px; }
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.avatar {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #3a3020;
+  color: var(--gold2);
+  font-weight: 800;
+}
+
+.demo-banner {
+  padding: 12px 15px;
+  border: 1px solid rgba(217,180,91,.25);
+  background: rgba(217,180,91,.07);
+  color: #d9c58e;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 22px;
+  min-width: 0;
+}
+
+.balance-card {
+  grid-column: span 2;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(217,180,91,.17), transparent 35%),
+    var(--panel);
+}
+
+.card-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.balance {
+  font-size: clamp(32px,4vw,43px);
+  font-weight: 800;
+  margin: 15px 0 8px;
+  letter-spacing: -1px;
+}
+
+.balance-caption {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.metric {
+  font-size: 28px;
+  font-weight: 750;
+  margin: 17px 0 7px;
+}
+
+.metric-caption {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.positive { color: var(--green); }
+
+.section {
+  margin-top: 27px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 23px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.section-heading h2 {
+  font-size: 17px;
+  margin: 0;
+}
+
+.section-heading span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 490px;
+}
+
+th {
+  color: #858e9e;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  padding: 13px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 16px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+tr:last-child td { border-bottom: 0; }
+
+.status {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 20px;
+  color: #e4c779;
+  background: rgba(217,180,91,.10);
+  font-size: 11px;
+}
+
+.investment-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.investment-form input,
+.investment-form select {
+  width: 100%;
+  background: #0c1018;
+  color: white;
+  border: 1px solid #2a3140;
+  border-radius: 9px;
+  padding: 13px;
+  margin-top: 8px;
+}
+
+.investment-form label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.investment-form button {
+  grid-column: span 2;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.chart {
+  width: 100%;
+  height: 170px;
+  margin-top: 15px;
+}
+
+.chart svg { width: 100%; height: 100%; }
+
+.mobile-brand { display: none; }
+
+@media(max-width: 900px) {
+  .sidebar { width: 205px; }
+  .main { margin-left: 205px; padding: 24px; }
+  .grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+
+@media(max-width: 650px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    gap: 5px;
+  }
+
+  .sidebar .brand { margin: 0 12px 0 0; }
+  .sidebar .brand span:last-child { display: none; }
+  .nav-label, .sidebar-bottom { display: none; }
+  .nav-btn { width: auto; white-space: nowrap; padding: 11px; }
+  .main { margin: 0; padding: 20px 15px; }
+  .grid { grid-template-columns: 1fr; }
+  .balance-card { grid-column: span 1; }
+  .topbar { align-items: flex-start; }
+  .profile { font-size: 0; }
+  .investment-form { grid-template-columns: 1fr; }
+  .investment-form button { grid-column: span 1; }
+  .login-card { padding: 27px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-icon">E</div>
+      <span>ELON <span class="gold">WALLET</span></span>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="subtitle">Sign in to access your wallet dashboard and investment overview.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" placeholder="Enter your username" required>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter your password" required>
+      </div>
+
+      <button class="primary-btn" type="submit">Sign In</button>
+    </form>
+
+    <p class="login-note">
+      Demonstration interface only. This login does not authenticate users
+      or protect financial information.
+    </p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">E</div>
+      <span>ELON <span class="gold">WALLET</span></span>
+    </div>
+
+    <div class="nav-label">MAIN MENU</div>
+    <button class="nav-btn active" onclick="showPage('overview',this)">▦ Overview</button>
+    <button class="nav-btn" onclick="showPage('portfolio',this)">◈ Portfolio</button>
+    <button class="nav-btn" onclick="showPage('invest',this)">＋ Invest</button>
+    <button class="nav-btn" onclick="showPage('activity',this)">↗ Activity</button>
+
+    <div class="nav-label">ACCOUNT</div>
+    <button class="nav-btn" onclick="showPage('account',this)">⚙ Account</button>
+
+    <div class="sidebar-bottom">
+      <button class="nav-btn logout" onclick="logout()">↪ Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">Investment Overview</h1>
+        <p>Welcome to your Elon Wallet dashboard.</p>
+      </div>
+      <div class="profile">
+        <div class="avatar">EW</div>
+        <span>Wallet Account</span>
+      </div>
+    </div>
+
+    <div class="demo-banner">
+      <strong>DEMO ACCOUNT:</strong> The displayed balance and investment
+      entries are demonstration information supplied for this interface.
+      They are not verified account records or proof of funds.
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="overview">
+      <div class="grid">
+
+        <div class="card balance-card">
+          <div class="card-label">Available Wallet Balance</div>
+          <div class="balance">€7,300.00</div>
+          <div class="balance-caption">Displayed balance · EUR</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Recorded Investments</div>
+          <div class="metric">€100.00</div>
+          <div class="metric-caption">2 supplied investment entries</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Account Currency</div>
+          <div class="metric">EUR</div>
+          <div class="metric-caption">Euro wallet display</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Investment Records</div>
+          <div class="metric">02</div>
+          <div class="metric-caption">Entries listed below</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-heading">
+          <h2>Investment Activity</h2>
+          <span>Supplied records</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>INVESTMENT</th>
+                <th>DATE</th>
+                <th>AMOUNT</th>
+                <th>RECORD TYPE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Investment Entry 01</td>
+                <td>02-11-2026</td>
+                <td>€50.00</td>
+                <td><span class="status">Demo record</span></td>
+              </tr>
+              <tr>
+                <td>Investment Entry 02</td>
+                <td>10-11-2026</td>
+                <td>€50.00</td>
+                <td><span class="status">Demo record</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-heading">
+          <h2>Portfolio Performance</h2>
+          <span>Illustrative chart</span>
+        </div>
+
+        <div class="chart">
+          <svg viewBox="0 0 700 170" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d9b45b" stop-opacity=".30"/>
+                <stop offset="100%" stop-color="#d9b45b" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0 135 C70 120 85 130 140 100 S230 115 280 80 S370 100 420 65 S520 75 570 40 S650 55 700 20 L700 170 L0 170 Z"
+              fill="url(#chartFill)"/>
+            <path d="M0 135 C70 120 85 130 140 100 S230 115 280 80 S370 100 420 65 S520 75 570 40 S650 55 700 20"
+              fill="none" stroke="#d9b45b" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="metric-caption">Illustrative graphic only — not actual investment performance.</p>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div class="page" id="portfolio">
+      <div class="section">
+        <div class="section-heading">
+          <h2>Portfolio Summary</h2>
+          <span>EUR</span>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="card-label">Displayed Wallet Balance</div>
+            <div class="metric">€7,300.00</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Recorded Investment Total</div>
+            <div class="metric">€100.00</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Investment Entries</div>
+            <div class="metric">2</div>
+          </div>
+        </div>
+        <p class="metric-caption" style="margin-top:20px">
+          These are display values only. No live assets, market prices, or
+          brokerage account are connected.
+        </p>
+      </div>
+    </div>
+
+    <!-- INVEST -->
+    <div class="page" id="invest">
+      <div class="section">
+        <div class="section-heading">
+          <h2>Investment Enquiry</h2>
+          <span>Demo only</span>
+        </div>
+        <p class="subtitle">
+          Use this form to preview an investment enquiry. It will not transfer
+          money or create a real investment.
+        </p>
+
+        <form class="investment-form" onsubmit="previewInvestment(event)">
+          <div>
+            <label>Investment Amount (€)</label>
+            <input type="number" min="1" placeholder="Enter amount" required>
+          </div>
+          <div>
+            <label>Investment Category</label>
+            <select required>
+              <option value="">Select category</option>
+              <option>Long-term investment</option>
+              <option>Portfolio investment</option>
+              <option>Digital assets</option>
+            </select>
+          </div>
+          <button class="primary-btn" type="submit">Preview Enquiry</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="page" id="activity">
+      <div class="section">
+        <div class="section-heading">
+          <h2>Account Activity</h2>
+          <span>Investment records</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>DESCRIPTION</th>
+                <th>DATE</th>
+                <th>AMOUNT</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Investment Entry 01</td>
+                <td>02-11-2026</td>
+                <td>€50.00</td>
+                <td><span class="status">Demo record</span></td>
+              </tr>
+              <tr>
+                <td>Investment Entry 02</td>
+                <td>10-11-2026</td>
+                <td>€50.00</td>
+                <td><span class="status">Demo record</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="page" id="account">
+      <div class="section">
+        <div class="section-heading">
+          <h2>Account Information</h2>
+          <span>Demo profile</span>
+        </div>
+        <p class="card-label">Platform</p>
+        <p>Elon Wallet</p>
+        <p class="card-label">Display Currency</p>
+        <p>Euro (€)</p>
+        <p class="card-label">Account Type</p>
+        <p>Demonstration account</p>
+        <p class="card-label">Security</p>
+        <p class="metric-caption">
+          This front-end demo does not provide real authentication,
+          password storage, or account security.
+        </p>
+      </div>
+    </div>
+
+    <p class="login-note">
+      Elon Wallet demonstration interface. Not affiliated with or endorsed by
+      Elon Musk, Tesla, SpaceX, X Corp., or their affiliates.
+    </p>
+
+  </main>
+</div>
+
+<script>
+const loginForm = document.getElementById("loginForm");
+
+loginForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!username || !password) {
+    alert("Please enter your username and password.");
+    return;
+  }
+
+  // Demo-only access. This is NOT real authentication.
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+});
+
+function logout() {
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("loginForm").reset();
+}
+
+function showPage(pageId, button) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  document.querySelectorAll(".nav-btn").forEach(nav => {
+    nav.classList.remove("active");
+  });
+
+  document.getElementById(pageId).classList.add("active");
+  button.classList.add("active");
+
+  const titles = {
+    overview: "Investment Overview",
+    portfolio: "My Portfolio",
+    invest: "Investment Enquiry",
+    activity: "Account Activity",
+    account: "Account Settings"
+  };
+
+  document.getElementById("pageTitle").textContent = titles[pageId];
+}
+
+function previewInvestment(event) {
+  event.preventDefault();
+  alert(
+    "Demo preview only. No investment has been placed and no money has been transferred."
+  );
+}
+</script>
+
+</body>
+</html>
